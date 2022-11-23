@@ -22,43 +22,31 @@ LinkedList.prototype.isEmpty = function () {
 
 // printNode(): 노드 출력
 LinkedList.prototype.printNode = function () {
-  //연결리스트 반복문으로 탐색
   for (let node = this.head; node != null; node = node.next) {
     process.stdout.write(`${node.data} -> `);
   }
-  //끝에는 null
   console.log('null');
 };
 
 // append(): 연결 리스트 가장 끝에 노드 추가
-/**
- * 데이터를 입력받아 해당 노드를 연결리스트 끝에 추가
- * @param {any} value node의 데이터
- */
 LinkedList.prototype.append = function (value) {
   let node = new Node(value),
     current = this.head;
 
-  //순차탐색을 하면서 노드를 연결해준다.
-
-  //헤드가 널이면 헤드는 노드를 참조해야한다.
   if (this.head === null) {
     this.head = node;
-    //처음이 아니라면 넥스트가 없을때까지 순회하다가
   } else {
     while (current.next != null) {
       current = current.next;
     }
-    // 널이되면 노드를 참조해야한다.
     current.next = node;
   }
-  //노드가 추가 되었으므로 길이도 증가
+
   this.length++;
 };
 
 // insert(): position 위치에 노드 추가
 LinkedList.prototype.insert = function (value, position = 0) {
-  //포지션 범위 체크
   if (position < 0 || position > this.length) {
     return false;
   }
@@ -67,7 +55,6 @@ LinkedList.prototype.insert = function (value, position = 0) {
     current = this.head,
     index = 0,
     prev;
-  console.log(`prev : ${prev}, current:${current}`);
 
   if (position === 0) {
     node.next = current;
@@ -76,9 +63,8 @@ LinkedList.prototype.insert = function (value, position = 0) {
     while (index++ < position) {
       prev = current;
       current = current.next;
-      console.log(`prev : ${prev.data}, current:${current.data}`);
     }
-    //연결고리 변경
+
     node.next = current;
     prev.next = node;
   }
@@ -88,16 +74,54 @@ LinkedList.prototype.insert = function (value, position = 0) {
   return true;
 };
 
+// remove(): value 데이터를 찾아 노드 삭제
+LinkedList.prototype.remove = function (value) {
+  let current = this.head,
+    prev = current;
+
+  //while문을 돌면서 current의 data가 입력값인 value와 같은 지 비교
+
+  //값이 다르거나 리스트가 끝날때까지 순회
+  while (current.data != value && current.next != null) {
+    prev = current;
+
+    current = current.next;
+    console.log(`prev : ${prev.data}, current:${current.data}`);
+  }
+  //멈췄다면 값을 찾았거나, 끝지점일 것이다.
+
+  //입력받은 value 데이터가 없는 경우
+  if (current.data != value) {
+    return null;
+  }
+
+  //값이 같을 때 (값을 찾은 경우)
+  if (current === this.head) {
+    this.head = current.next;
+  } else {
+    prev.next = current.next;
+  }
+
+  this.length--;
+
+  return current.data;
+};
+
 let ll = new LinkedList();
 
 ll.insert(1);
-ll.printNode(); //1 -> null
 ll.insert(10);
-ll.printNode(); //10 -> 1 -> null
 ll.insert(100);
-ll.printNode(); // 100 -> 10 -> 1 -> null
+ll.insert(2, 1);
+ll.insert(3, 3);
+ll.printNode(); //100 -> 2 -> 10 -> 3 -> 1 -> null
 
-ll.insert(5, 1);
-ll.printNode(); //100 -> 5 -> 10 -> 1 -> null
-ll.insert(7, 3);
-ll.printNode(); //100 -> 5 -> 10 -> 7 -> 1 -> null
+console.log(ll.remove(1000)); //null
+ll.printNode(); //100 -> 2 -> 10 -> 3 -> 1 -> null
+console.log(ll.remove(1)); //1
+ll.printNode(); //100 -> 2 -> 10 -> 3 -> null
+console.log(ll.remove(2)); //2
+ll.printNode(); //100 -> 10 -> 3 -> null
+console.log(ll.remove(100)); //100
+ll.printNode(); //10 -> 3 -> null
+console.log(ll.size()); //2
